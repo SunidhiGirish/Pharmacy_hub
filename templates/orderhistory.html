@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feedback - Pharmacy Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-green-50 text-gray-800 min-h-screen flex flex-col">
+  <!-- Header Section -->
+  <header class="flex items-center justify-between px-8 py-4 shadow-md bg-white">
+    <div class="flex items-center gap-4">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Pharmacy Logo" class="w-12 h-12" />
+      <h1 class="text-2xl font-bold text-green-700">Pharmacy Hub</h1>
+    </div>
+    <nav class="space-x-6">
+      <a href="{{ url_for('index') }}" class="text-gray-600 hover:text-green-700 font-medium">Home</a>
+      <a href="{{ url_for('medicines') }}" class="text-gray-600 hover:text-green-700 font-medium">Medicines</a>
+      <a href="{{ url_for('cart') }}" class="text-gray-600 hover:text-green-700 font-medium">Cart</a>
+      <a href="{{ url_for('orderhistory') }}" class="text-gray-600 hover:text-green-700 font-medium">Order History</a>
+      <a href="{{ url_for('feedback') }}" class="text-gray-600 hover:text-green-700 font-medium">Feedback</a>
+
+      {% if 'user_id' not in session %}
+        <a href="{{ url_for('signin') }}" class="text-gray-600 hover:text-green-700 font-medium">Sign In</a>
+        <a href="{{ url_for('signup') }}" class="text-gray-600 hover:text-green-700 font-medium">Sign Up</a>
+      {% else %}
+        <a href="{{ url_for('logout') }}" class="text-gray-600 hover:text-green-700 font-medium">Logout</a>
+      {% endif %}
+    </nav>
+  </header>
+
+    <!-- Order History -->
+    <div class="container mx-auto p-6">
+        <h1 class="text-2xl font-bold mb-4">Order History</h1>
+
+        {% if orders %}
+        <table class="table-auto w-full bg-white border border-gray-300">
+            <thead>
+                <tr>
+                    <th class="px-4 py-2 text-left">Order ID</th>
+                    <th class="px-4 py-2 text-left">Total Amount</th>
+                    <th class="px-4 py-2 text-left">Date</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td class="px-4 py-2">{{ order.id }}</td>
+                    <td class="px-4 py-2">${{ order.total_amount }}</td>
+                    <td class="px-4 py-2">{{ order.date }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% else %}
+        <p>You have no order history.</p>
+        {% endif %}
+    </div>
+
+</body>
+
+</html>

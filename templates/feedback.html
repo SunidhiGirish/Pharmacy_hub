@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Feedback - Pharmacy Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-green-50 text-gray-800 min-h-screen flex flex-col">
+  <!-- Header Section -->
+  <header class="flex items-center justify-between px-8 py-4 shadow-md bg-white">
+    <div class="flex items-center gap-4">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Pharmacy Logo" class="w-12 h-12" />
+      <h1 class="text-2xl font-bold text-green-700">Pharmacy Hub</h1>
+    </div>
+    <nav class="space-x-6">
+      <a href="{{ url_for('index') }}" class="text-gray-600 hover:text-green-700 font-medium">Home</a>
+      <a href="{{ url_for('medicines') }}" class="text-gray-600 hover:text-green-700 font-medium">Medicines</a>
+      <a href="{{ url_for('cart') }}" class="text-gray-600 hover:text-green-700 font-medium">Cart</a>
+      <a href="{{ url_for('orderhistory') }}" class="text-gray-600 hover:text-green-700 font-medium">Order History</a>
+      <a href="{{ url_for('feedback') }}" class="text-gray-600 hover:text-green-700 font-medium">Feedback</a>
+
+      {% if 'user_id' not in session %}
+        <a href="{{ url_for('signin') }}" class="text-gray-600 hover:text-green-700 font-medium">Sign In</a>
+        <a href="{{ url_for('signup') }}" class="text-gray-600 hover:text-green-700 font-medium">Sign Up</a>
+      {% else %}
+        <a href="{{ url_for('logout') }}" class="text-gray-600 hover:text-green-700 font-medium">Logout</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <!-- Main Content Section -->
+  <main class="flex-1 container mx-auto px-4 py-10 max-w-xl">
+    <h2 class="text-3xl font-bold text-green-800 mb-6 text-center">Feedback</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        {% for category, message in messages %}
+          <div class="mb-4 p-4 rounded text-white {% if category == 'success' %}bg-green-500{% elif category == 'danger' %}bg-red-500{% else %}bg-yellow-500{% endif %}">
+            {{ message }}
+          </div>
+        {% endfor %}
+      {% endif %}
+    {% endwith %}
+
+    <form method="POST" class="space-y-4">
+      <label for="message" class="block text-lg font-medium">Your Feedback</label>
+      <textarea name="message" id="message" rows="4" class="w-full p-4 border border-gray-300 rounded-md" required></textarea>
+      <button type="submit" class="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700">Submit</button>
+    </form>
+  </main>
+
+  <!-- Footer (optional) -->
+</body>
+</html>

@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Your Cart - Pharmacy Hub</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-green-50 text-gray-800 min-h-screen">
+
+  <!-- Header -->
+  <header class="flex items-center justify-between px-8 py-4 shadow-md bg-white">
+    <div class="flex items-center gap-4">
+      <img src="{{ url_for('static', filename='images/logo.png') }}" alt="Pharmacy Logo" class="w-12 h-12" />
+      <h1 class="text-2xl font-bold text-green-700">Pharmacy Hub</h1>
+    </div>
+    <nav class="space-x-6">
+      <a href="{{ url_for('index') }}" class="text-gray-600 hover:text-green-700 font-medium">Home</a>
+      <a href="{{ url_for('medicines') }}" class="text-gray-600 hover:text-green-700 font-medium">Medicines</a>
+      <a href="{{ url_for('cart') }}" class="text-green-700 font-bold">Cart</a>
+      <a href="{{ url_for('orderhistory') }}" class="text-gray-600 hover:text-green-700 font-medium">Order History</a>
+      <a href="{{ url_for('feedback') }}" class="text-gray-600 hover:text-green-700 font-medium">Feedback</a>
+      {% if 'user_id' not in session %}
+        <a href="{{ url_for('signin') }}" class="text-gray-600 hover:text-green-700 font-medium">Sign In</a>
+        <a href="{{ url_for('signup') }}" class="text-gray-600 hover:text-green-700 font-medium">Sign Up</a>
+      {% else %}
+        <a href="{{ url_for('logout') }}" class="text-gray-600 hover:text-green-700 font-medium">Logout</a>
+      {% endif %}
+    </nav>
+  </header>
+
+  <!-- Cart Section -->
+  <section class="container mx-auto px-4 py-10">
+    <h2 class="text-3xl font-bold text-center text-green-800 mb-8">Your Cart</h2>
+
+    {% with messages = get_flashed_messages(with_categories=true) %}
+      {% if messages %}
+        <div class="mb-6 text-center">
+          {% for category, message in messages %}
+            <div class="text-sm text-{{ 'red' if category == 'danger' else 'green' }}-600">{{ message }}</div>
+          {% endfor %}
+        </div>
+      {% endif %}
+    {% endwith %}
+
+    {% if cart_items %}
+    <div class="overflow-x-auto bg-white rounded-xl shadow-md p-6">
+      <table class="table-auto w-full">
+        <thead>
+          <tr class="bg-gray-100">
+            <th class="px-4 py-2 border">Product</th>
+            <th class="px-4 py-2 border">Price</th>
+            <th class="px-4 py-2 border">Quantity</th>
+            <th class="px-4 py-2 border">Total</th>
+            <th class="px-4 py-2 border">Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in cart_items %}
+          <tr>
+            <td class="px-4 py-2 border">{{ item.name }}</td>
+            <td class="px-4 py-2 border">{{ item.price | float }}</td>
+            <td class="px-4 py-2 border">{{ item.quantity }}</td>
+            <td class="px-4 py-2 border">{{ (item.price | float) * (item.quantity | int) }}</td>
+            <td class="px-4 py-2 border">
+              <form action="{{ url_for('remove_from_cart', medicine_id=item.medicine_id) }}" method="POST">
+                <button type="submit" class="bg-red-500 text-white px-4 py-2 rounded">Remove</button>
+              </form>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="flex justify-end mt-6">
+      <h3 class="text-xl font-semibold text-green-800">Grand Total: ₹{{ grand_total }}</h3>
+    </div>
+
+    <div class="flex justify-between mt-6">
+      <a href="{{ url_for('medicines') }}" class="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-700">Continue Shopping</a>
+      <a href="{{ url_for('checkout') }}" class="bg-green-500 text-white px-6 py-2 rounded hover:bg-green-700">Proceed to Checkout</a>
+    </div>
+
+    {% else %}
+    <div class="text-center text-gray-600">Your cart is empty. Start adding products!</div>
+    {% endif %}
+  </section>
+
+  <!-- Footer -->
+  <footer class="bg-green-700 text-white text-center py-4">
+    <p>&copy; 2025 Pharmacy Hub. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>
